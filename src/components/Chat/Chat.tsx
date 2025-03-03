@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
+import { useParams } from "react-router-dom";
 import {Client, over} from "stompjs";
 import SockJS from "sockjs-client";
+import axios from "axios";
 
 // Тип для сообщения
 interface Message {
@@ -8,7 +10,14 @@ interface Message {
     content: string;
 }
 
-const Messages: React.FC = () => {
+const Chat: React.FC = () => {
+    const api = axios.create({
+        baseURL: "http://localhost:8080",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+    });
+    const { chatName } = useParams<{ chatName: string }>(); // Получаем chatName из URL
     const [stompClient, setStompClient] = useState<Client | null>(null);
     const [connected, setConnected] = useState<boolean>(false);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -54,9 +63,9 @@ const Messages: React.FC = () => {
 
     // Отправка сообщения
     const sendMessage = () => {
-        if (stompClient && connected && from && content) {
+        if (from && content) {
             const message: Message = {from, content: content};
-            stompClient.send("/app/message", {}, JSON.stringify(message));
+            api.post("/message/new", message);
         } else {
             console.error("WebSocket is not connected or missing 'from'/'to' values");
         }
@@ -64,7 +73,7 @@ const Messages: React.FC = () => {
 
     return (
         <div>
-            <h2>WebSocket Client</h2>
+            <h2>{chatName}</h2>
             <div>
                 <label>
                     From:
@@ -100,4 +109,4 @@ const Messages: React.FC = () => {
     );
 };
 
-export default Messages;
+export default Chat;
