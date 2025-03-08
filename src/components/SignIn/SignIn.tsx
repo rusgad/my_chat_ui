@@ -16,7 +16,7 @@ const SignIn: React.FC = () => {
                 'password': password,
             });
             localStorage.setItem("token", response.data.token); // Сохраняем токен
-            navigate("/messages"); // Перенаправляем на защищенную страницу
+            navigate("/chats"); // Перенаправляем на защищенную страницу
         } catch (err) {
             setError("Неверный логин или пароль");
         }

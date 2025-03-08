@@ -33,7 +33,7 @@ const ChatsList: React.FC = () => {
 
     const fetchChats = async () => {
         try {
-            const response = await api.get<Chat[]>("/chat");
+            const response = await api.get<Chat[]>("/chats");
             setChats(response.data);
         } catch (error) {
             console.error("Ошибка при получении чатов:", error);
@@ -53,7 +53,7 @@ const ChatsList: React.FC = () => {
         };
 
         try {
-            await api.post("/chat/create-new-chat", newChat);
+            await api.post("/chats/create-new-chat", newChat);
             alert("Чат успешно создан!");
             setIsCreatingChat(false);
             setChatName("");
@@ -79,7 +79,7 @@ const ChatsList: React.FC = () => {
 
     // Переход на страницу чата
     const handleChatClick = (chatName: string) => {
-        navigate(`/chat/${chatName}`); // Переход на страницу чата
+        navigate(`/chats/${chatName}`); // Переход на страницу чата
     };
 
     return (

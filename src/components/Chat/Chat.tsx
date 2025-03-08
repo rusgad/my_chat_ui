@@ -6,8 +6,9 @@ import axios from "axios";
 
 // Тип для сообщения
 interface Message {
-    from: string;
+    from: string | undefined;
     content: string;
+    chatName: string;
 }
 
 const Chat: React.FC = () => {
@@ -18,10 +19,8 @@ const Chat: React.FC = () => {
         },
     });
     const { chatName } = useParams<{ chatName: string }>(); // Получаем chatName из URL
-    const [stompClient, setStompClient] = useState<Client | null>(null);
     const [connected, setConnected] = useState<boolean>(false);
     const [messages, setMessages] = useState<Message[]>([]);
-    const [from, setFrom] = useState<string>("");
     const [content, setContent] = useState<string>("");
 
     // Эндпоинт для подключения к WebSocket
@@ -33,23 +32,22 @@ const Chat: React.FC = () => {
 
     // Подключение к WebSocket
     useEffect(() => {
+        console.log(chatName)
         const socket = new SockJS(SOCKET_URL);
         const client = over(socket);
 
         client.connect({
-            "Authorization": localStorage.getItem("token")
+            // "Authorization": localStorage.getItem("token")
         }, () => {
             setConnected(true);
             console.log("Connected to WebSocket");
 
             // Подписка на топик
-            client.subscribe(`${QUEUE}${TOPIC}`, (message) => {
+            client.subscribe(`${QUEUE}${TOPIC}.${chatName}`, (message) => {
                 const newMessage: Message = JSON.parse(message.body);
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
             });
         });
-
-        setStompClient(client);
 
         // Отключение при размонтировании компонента
         return () => {
@@ -63,8 +61,9 @@ const Chat: React.FC = () => {
 
     // Отправка сообщения
     const sendMessage = () => {
-        if (from && content) {
-            const message: Message = {from, content: content};
+        if (content && chatName) {
+            const message: Message = {from: undefined, content, chatName};
+            console.log(message)
             api.post("/message/new", message);
         } else {
             console.error("WebSocket is not connected or missing 'from'/'to' values");
@@ -76,17 +75,7 @@ const Chat: React.FC = () => {
             <h2>{chatName}</h2>
             <div>
                 <label>
-                    From:
-                    <input
-                        type="text"
-                        value={from}
-                        onChange={(e) => setFrom(e.target.value)}
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    To:
+                    Content:
                     <input
                         type="text"
                         value={content}
@@ -94,7 +83,7 @@ const Chat: React.FC = () => {
                     />
                 </label>
             </div>
-            <button onClick={sendMessage} disabled={!connected || !from || !content}>
+            <button onClick={sendMessage} disabled={!connected || !content}>
                 Send Message
             </button>
             <h3>Received Messages:</h3>
