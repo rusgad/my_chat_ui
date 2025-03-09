@@ -32,15 +32,16 @@ const Chat: React.FC = () => {
 
     // Подключение к WebSocket
     useEffect(() => {
-        console.log(chatName)
         const socket = new SockJS(SOCKET_URL);
         const client = over(socket);
 
         client.connect({
             // "Authorization": localStorage.getItem("token")
-        }, () => {
+        }, async () => {
             setConnected(true);
-            console.log("Connected to WebSocket");
+
+            const chatHistory = await fetchChatHistory(chatName);
+            setMessages(chatHistory);
 
             // Подписка на топик
             client.subscribe(`${QUEUE}${TOPIC}.${chatName}`, (message) => {
@@ -58,6 +59,18 @@ const Chat: React.FC = () => {
             }
         };
     }, []);
+
+    const fetchChatHistory = async (chatName: string | undefined) => {
+        try {
+            const response = await api.get(`/message/chat-history`, {
+                params: { chatName } // Параметры запроса
+            });
+            return response.data; // Предполагаем, что сервер возвращает { messages: Message[] }
+        } catch (error) {
+            console.error("Error fetching chat history:", error);
+            return []; // Возвращаем пустой массив в случае ошибки
+        }
+    };
 
     // Отправка сообщения
     const sendMessage = () => {

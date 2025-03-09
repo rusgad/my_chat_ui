@@ -53,7 +53,7 @@ const ChatsList: React.FC = () => {
         };
 
         try {
-            await api.post("/chats/create-new-chat", newChat);
+            await api.post("/chats/new", newChat);
             alert("Чат успешно создан!");
             setIsCreatingChat(false);
             setChatName("");
