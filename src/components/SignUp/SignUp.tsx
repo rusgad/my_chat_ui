@@ -1,6 +1,7 @@
-import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./SignUp.css"; // Импортируем стили
 
 const SignUp: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -13,21 +14,21 @@ const SignUp: React.FC = () => {
         e.preventDefault();
         try {
             const response = await axios.post("http://localhost:8080/auth/sign-up", {
-                'username': username,
-                'email': email,
-                'password': password,
+                username: username,
+                email: email,
+                password: password,
             });
             localStorage.setItem("token", response.data.token); // Сохраняем токен
-            navigate("/sign-in"); // Перенаправляем на защищенную страницу
+            navigate("/sign-in"); // Перенаправляем на страницу входа
         } catch (err) {
             setError("Неверные данные");
         }
     };
 
     return (
-        <div>
-            <h2>SignUp</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+        <div className="signup-container">
+            <h2>Sign Up</h2>
+            {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleLogin}>
                 <div>
                     <label>Username:</label>
@@ -53,7 +54,7 @@ const SignUp: React.FC = () => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <button type="submit">Sign up</button>
+                <button type="submit">Sign Up</button>
             </form>
         </div>
     );

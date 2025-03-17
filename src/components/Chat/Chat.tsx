@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {Client, over} from "stompjs";
+import { Client, over } from "stompjs";
 import SockJS from "sockjs-client";
 import axios from "axios";
+import "./Chat.css"; // Импортируем стили
 
 // Тип для сообщения
 interface Message {
@@ -35,9 +36,7 @@ const Chat: React.FC = () => {
         const socket = new SockJS(SOCKET_URL);
         const client = over(socket);
 
-        client.connect({
-            // "Authorization": localStorage.getItem("token")
-        }, async () => {
+        client.connect({}, async () => {
             setConnected(true);
 
             const chatHistory = await fetchChatHistory(chatName);
@@ -63,7 +62,7 @@ const Chat: React.FC = () => {
     const fetchChatHistory = async (chatName: string | undefined) => {
         try {
             const response = await api.get(`/message/chat-history`, {
-                params: { chatName } // Параметры запроса
+                params: { chatName }, // Параметры запроса
             });
             return response.data; // Предполагаем, что сервер возвращает { messages: Message[] }
         } catch (error) {
@@ -75,35 +74,35 @@ const Chat: React.FC = () => {
     // Отправка сообщения
     const sendMessage = () => {
         if (content && chatName) {
-            const message: Message = {from: undefined, content, chatName};
-            console.log(message)
+            const message: Message = { from: undefined, content, chatName };
+            console.log(message);
             api.post("/message/new", message);
+            setContent(""); // Очищаем поле ввода после отправки
         } else {
             console.error("WebSocket is not connected or missing 'from'/'to' values");
         }
     };
 
     return (
-        <div>
+        <div className="chat-container">
             <h2>{chatName}</h2>
-            <div>
-                <label>
-                    Content:
-                    <input
-                        type="text"
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                    />
-                </label>
+            <div className="message-input">
+                <input
+                    type="text"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                    placeholder="Введите сообщение..."
+                />
+                <button onClick={sendMessage} disabled={!connected || !content}>
+                    Отправить
+                </button>
             </div>
-            <button onClick={sendMessage} disabled={!connected || !content}>
-                Send Message
-            </button>
-            <h3>Received Messages:</h3>
-            <ul>
+            <h3>Сообщения:</h3>
+            <ul className="messages-list">
                 {messages.map((msg, index) => (
                     <li key={index}>
-                        <strong>From:</strong> {msg.from}, <strong>To:</strong> {msg.content}
+                        <strong>От:</strong> {msg.from}, <strong>Сообщение:</strong> {msg.content}
                     </li>
                 ))}
             </ul>

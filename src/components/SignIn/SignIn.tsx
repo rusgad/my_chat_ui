@@ -1,6 +1,7 @@
-import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./SignIn.css"; // Импортируем стили
 
 const SignIn: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -12,8 +13,8 @@ const SignIn: React.FC = () => {
         e.preventDefault();
         try {
             const response = await axios.post("http://localhost:8080/auth/sign-in", {
-                'username': username,
-                'password': password,
+                username: username,
+                password: password,
             });
             localStorage.setItem("token", response.data.token); // Сохраняем токен
             navigate("/chats"); // Перенаправляем на защищенную страницу
@@ -23,9 +24,9 @@ const SignIn: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className="signin-container">
             <h2>Login</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleLogin}>
                 <div>
                     <label>Username:</label>

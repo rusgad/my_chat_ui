@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import "./ChatsList.css"; // Импортируем стили
 
 export interface Chat {
     id: number;
@@ -24,7 +25,7 @@ const ChatsList: React.FC = () => {
     const [chatName, setChatName] = useState<string>("");
     const [participants, setParticipants] = useState<string[]>([]);
     const [newParticipant, setNewParticipant] = useState<string>("");
-    const navigate = useNavigate(); // Хук для навигации
+    const navigate = useNavigate();
 
     // Получение списка чатов
     useEffect(() => {
@@ -79,24 +80,26 @@ const ChatsList: React.FC = () => {
 
     // Переход на страницу чата
     const handleChatClick = (chatName: string) => {
-        navigate(`/chats/${chatName}`); // Переход на страницу чата
+        navigate(`/chats/${chatName}`);
     };
 
     return (
-        <div>
+        <div className="chats-list-container">
             <h1>Список чатов</h1>
             <ul>
                 {chats.map((chat) => (
-                    <li key={chat.id} onClick={() => handleChatClick(chat.name)} style={{cursor: "pointer"}}>
+                    <li key={chat.id} onClick={() => handleChatClick(chat.name)}>
                         {chat.name}
                     </li>
                 ))}
             </ul>
 
-            <button onClick={() => setIsCreatingChat(true)}>Создать новый чат</button>
+            <button className="create-chat-button" onClick={() => setIsCreatingChat(true)}>
+                Создать новый чат
+            </button>
 
             {isCreatingChat && (
-                <div>
+                <div className="create-chat-form">
                     <h2>Создание нового чата</h2>
                     <div>
                         <label>
@@ -120,7 +123,7 @@ const ChatsList: React.FC = () => {
                             <button onClick={addParticipant}>Добавить</button>
                         </label>
                     </div>
-                    <div>
+                    <div className="participants-list">
                         <h3>Добавленные участники:</h3>
                         <ul>
                             {participants.map((username, index) => (
@@ -131,8 +134,14 @@ const ChatsList: React.FC = () => {
                             ))}
                         </ul>
                     </div>
-                    <button onClick={handleCreateChat}>Создать</button>
-                    <button onClick={() => setIsCreatingChat(false)}>Отмена</button>
+                    <div className="form-actions">
+                        <button type="button" onClick={() => setIsCreatingChat(false)}>
+                            Отмена
+                        </button>
+                        <button type="submit" onClick={handleCreateChat}>
+                            Создать
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

@@ -1,0 +1,97 @@
+.chat-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.chat-container .message-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.chat-container .message-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.chat-container .message-input input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.chat-container .message-input button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.chat-container .message-input button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.chat-container .message-input button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.chat-container .messages-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.chat-container .messages-list li {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.chat-container .messages-list li strong {
+    color: #007bff;
+}
